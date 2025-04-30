@@ -1,39 +1,48 @@
-import { users, type User, type InsertUser } from "@shared/schema";
-
-// modify the interface with any CRUD methods
-// you might need
+import { usuarios, type Usuario, type InsertUsuario } from "@shared/schema";
+import { supabase } from "./supabase";
 
 export interface IStorage {
-  getUser(id: number): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  getUser(id: string): Promise<Usuario | undefined>;
+  getUserByEmail(email: string): Promise<Usuario | undefined>;
+  createUser(user: InsertUsuario & { senha_hash: string }): Promise<Usuario | undefined>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  currentId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.currentId = 1;
+export class SupabaseStorage implements IStorage {
+  async getUser(id: string): Promise<Usuario | undefined> {
+    const { data, error } = await supabase
+      .from('usuarios')
+      .select('*')
+      .eq('id', id)
+      .single();
+    
+    if (error || !data) return undefined;
+    return data as Usuario;
   }
 
-  async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+  async getUserByEmail(email: string): Promise<Usuario | undefined> {
+    const { data, error } = await supabase
+      .from('usuarios')
+      .select('*')
+      .eq('email', email)
+      .single();
+    
+    if (error || !data) return undefined;
+    return data as Usuario;
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
-  }
-
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentId++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+  async createUser(insertUser: InsertUsuario & { senha_hash: string }): Promise<Usuario | undefined> {
+    // Omit the 'senha' field and add the 'senha_hash' field
+    const { senha, ...userWithoutSenha } = insertUser;
+    
+    const { data, error } = await supabase
+      .from('usuarios')
+      .insert(userWithoutSenha)
+      .select()
+      .single();
+    
+    if (error || !data) return undefined;
+    return data as Usuario;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new SupabaseStorage();
