@@ -1,0 +1,288 @@
+Crie um sistema de gerenciamento para o salão de beleza Dellas - Cabelo & Pele com as seguintes características:
+## Funcionalidades principais:
+- Agendamento de clientes com status detalhado (agendado, cancelado, finalizado, pagamento pendente)
+- Controle financeiro e rastreamento de pagamentos
+- Gestão de clientes e serviços
+- Filtros e paginação de dados
+- Dashboard com resumo de próximos agendamentos e finanças
+## Requisitos técnicos específicos:
+1. Frontend:
+   - Crie um SPA (Single Page Application) com React
+   - Use Tailwind CSS com componentes do Shadcn UI
+   - Implemente TanStack Query para gerenciamento de estado
+   - Utilize React Hook Form para formulários
+   - Interface em português brasileiro
+2. Backend:
+   - **IMPORTANTE**: Desenvolva usando funções serverless compatíveis com Vercel
+   - NÃO use servidor Express tradicional com server.listen()
+   - Implemente todas as APIs como funções serverless Next.js API Routes
+3. Banco de dados:
+   - Use Supabase como backend
+   - Configure corretamente os schemas conforme os requisitos do negócio
+   - Implemente queries otimizadas
+   - Use tipos Typescript estáticos para garantir compatibilidade de dados
+4. Deployment:
+   - Garanta total compatibilidade com Vercel
+   - Evite o uso de módulos Node.js não suportados no ambiente serverless (como crypto)
+   - Configure variáveis de ambiente necessárias (SUPABASE_URL, SUPABASE_KEY)
+   - Forneça um arquivo vercel.json com configurações apropriadas
+## Requisitos de interface:
+- Interface em português brasileiro
+- Design limpo e profissional
+- Tela de calendário para visualização e gestão de agendamentos
+- Tela de clientes e gerenciamento
+- Tela de serviços oferecidos 
+- Tela de relatórios financeiros
+- Indicadores de status claros para pagamentos (pago, pendente)
+Evite erros comuns:
+- Não use Express.listen() que não funciona em ambientes serverless
+- Não dependa de módulos incompatíveis com Edge Functions da Vercel
+- Faça tratamento adequado de CORS para as funções serverless
+- Garanta que todas as importações e exportações sejam compatíveis com ESM
+Este prompt enfatiza:
+
+A abordagem serverless desde o início (em vez de tentar adaptar um servidor Express existente)
+A compatibilidade com Edge Functions da Vercel
+O uso adequado do Supabase para o backend
+A estruturação correta do projeto para evitar problemas de importação/exportação
+O sistema recriado com essas diretrizes terá uma base mais sólida para funcionar corretamente tanto em ambiente de desenvolvimento quanto em produção na Vercel.
+
+o prompt deve ser totalmente completo para que toda as telas funcionem corretamente
+
+5 minutes ago
+OT
+
+webifi2032
+Aqui está um prompt completo e detalhado para recriar o sistema com todas as telas funcionando corretamente:
+
+Crie um sistema de gerenciamento completo para o salão de beleza Dellas - Cabelo & Pele com todas as telas e funcionalidades detalhadas abaixo:
+## Visão geral do sistema
+Desenvolva um sistema que permita gerenciar agendamentos, clientes, serviços, estoque, finanças e relatórios para um salão de beleza. O sistema deve ser intuitivo, em português brasileiro, e otimizado para uso em computadores.
+## Especificações técnicas 
+### Arquitetura:
+- Frontend: React SPA hospedado na Vercel
+- Backend: Funções serverless (API routes) compatíveis com Vercel
+- Banco de dados: Supabase (PostgreSQL)
+- Autenticação: Supabase Auth
+- Design: Tailwind CSS + Shadcn UI
+### Escolhas tecnológicas específicas:
+- **Importante:** Use Next.js App Router (ou Pages Router com API Routes)
+- TanStack Query para gerenciamento de estado e chamadas à API
+- React Hook Form para validação de formulários
+- SWR ou TanStack Query para fetching de dados
+- Zod para validação de dados
+### Configuração do Vercel:
+- Estruture o projeto usando a pasta `/pages/api/` para endpoints (se Pages Router)
+- **NÃO** use Express com server.listen()
+- Configure adequadamente vercel.json com:
+  ```json
+  {
+    "version": 2,
+    "rewrites": [
+      { "source": "/api/:path*", "destination": "/api/:path*" },
+      { "source": "/(.*)", "destination": "/index.html" }
+    ],
+    "headers": [
+      { "source": "/api/(.*)", "headers": [{ "key": "Access-Control-Allow-Origin", "value": "*" }] }
+    ]
+  }
+Supabase:
+Crie tabelas com nomes em português: clientes, servicos, agendamentos, pagamentos, estoque, transacoes_financeiras
+Configure corretamente relacionamentos entre tabelas
+Implemente políticas de segurança adequadas
+Forneça script SQL de inicialização
+Telas e componentes detalhados
+1. Login e autenticação
+Tela de login (email/senha)
+Recuperação de senha
+Cadastro de novos funcionários (apenas admin)
+Perfis de acesso (admin, atendente)
+2. Dashboard (Tela inicial)
+Agendamentos do dia atual
+Resumo financeiro (entradas x saídas)
+Itens de estoque com baixa quantidade
+Gráfico de desempenho mensal
+Indicadores: agendamentos concluídos, cancelados, valor total recebido hoje
+3. Agenda (Calendário)
+Visualização diária/semanal/mensal
+Filtros por data, status, profissional
+Funcionalidades:
+Criar novo agendamento
+Ver detalhes do agendamento (modal)
+Cancelar agendamento
+Marcar como concluído
+Registrar pagamento
+Status dos agendamentos:
+agendado (quando criado)
+cancelado (quando cancelado)
+finalizado (quando serviço feito e pagamento confirmado)
+pagamento pendente (quando serviço feito mas pagamento pendente)
+4. Clientes
+Listagem com paginação e filtros por nome/telefone
+Cadastro de novo cliente
+Nome, telefone, email, observações
+Visualização de histórico de cliente
+Agendamentos anteriores
+Total gasto
+Serviços mais utilizados
+Edição e exclusão de clientes
+5. Serviços
+Listagem de serviços oferecidos
+Cadastro de novos serviços
+Nome, preço, duração, descrição
+Edição e exclusão de serviços
+Categorização de serviços (cabelo, pele, etc.)
+6. Estoque
+Listagem de produtos em estoque
+Filtros por categoria/nome/quantidade
+Cadastro de novos produtos
+Nome, quantidade, preço de custo, preço de venda, categoria
+Alertas de estoque baixo
+Histórico de movimentação de estoque
+7. Finanças
+Listagem de transações
+Filtros por data, tipo (entrada/saída), categoria
+Entrada manual de transações
+Data, valor, descrição, categoria, método de pagamento
+Dashboard financeiro
+Gráficos de receitas x despesas
+Projeção mensal
+Análise de serviços mais lucrativos
+8. Pagamentos pendentes
+Listagem de agendamentos com pagamento pendente
+Filtros por data, cliente, valor
+Funcionalidade de registrar pagamento
+Valor, método de pagamento, data, observações
+Geração de comprovante (PDF)
+9. Relatórios
+Relatório de agendamentos (diário/semanal/mensal)
+Relatório financeiro
+Relatório de clientes e serviços mais frequentes
+Exportação para CSV/PDF
+10. Configurações
+Dados do salão
+Horário de funcionamento
+Configurações de notificações
+Modelos de dados
+Clientes
+CREATE TABLE clientes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  nome TEXT NOT NULL,
+  telefone TEXT,
+  email TEXT,
+  observacoes TEXT,
+  data_cadastro TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  criado_por UUID REFERENCES auth.users(id)
+);
+Serviços
+CREATE TABLE servicos (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  nome TEXT NOT NULL,
+  preco DECIMAL NOT NULL,
+  duracao INTEGER NOT NULL, -- em minutos
+  descricao TEXT,
+  categoria TEXT,
+  data_cadastro TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  criado_por UUID REFERENCES auth.users(id)
+);
+Agendamentos
+CREATE TABLE agendamentos (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  cliente_id UUID REFERENCES clientes(id),
+  data_hora_inicio TIMESTAMP WITH TIME ZONE NOT NULL,
+  data_hora_fim TIMESTAMP WITH TIME ZONE NOT NULL,
+  status TEXT NOT NULL DEFAULT 'agendado', -- agendado, cancelado, finalizado, pagamento pendente
+  observacoes TEXT,
+  preco_final DECIMAL,
+  recorrencia TEXT, -- diário, semanal, mensal, etc.
+  data_pagamento TIMESTAMP WITH TIME ZONE,
+  status_pagamento TEXT, -- pago, pendente, null
+  metodo_pagamento TEXT,
+  data_cadastro TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  criado_por UUID REFERENCES auth.users(id)
+);
+Agendamento_Servicos
+CREATE TABLE agendamento_servicos (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  agendamento_id UUID REFERENCES agendamentos(id),
+  servico_id UUID REFERENCES servicos(id),
+  preco DECIMAL NOT NULL,
+  preco_final DECIMAL -- permitir descontos ou ajustes
+);
+Estoque
+CREATE TABLE estoque (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  nome TEXT NOT NULL,
+  quantidade INTEGER DEFAULT 0,
+  preco_custo DECIMAL,
+  preco_venda DECIMAL,
+  categoria TEXT,
+  data_cadastro TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+Transações financeiras
+CREATE TABLE transacoes_financeiras (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  tipo TEXT NOT NULL, -- entrada, saída
+  data_transacao TIMESTAMP WITH TIME ZONE NOT NULL,
+  descricao TEXT NOT NULL,
+  valor DECIMAL NOT NULL,
+  categoria TEXT,
+  metodo_pagamento TEXT,
+  agendamento_id UUID REFERENCES agendamentos(id),
+  venda_id UUID REFERENCES vendas(id),
+  data_cadastro TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+Fluxos e regras de negócio
+Agendamentos
+Ao criar um agendamento:
+
+Verificar disponibilidade de horário
+Calcular horário de término baseado na duração dos serviços
+Status inicial: "agendado"
+Status de pagamento: null
+Ao cancelar um agendamento:
+
+Solicitar motivo do cancelamento
+Status: "cancelado"
+Ao finalizar um agendamento:
+
+Confirmar serviços realizados (permitir ajustes)
+Calcular valor final
+Registrar forma de pagamento
+Status: "finalizado" (se pago) ou "pagamento pendente"
+Status de pagamento: "pago" ou "pendente"
+Criar transação financeira correspondente
+Pagamentos
+Ao registrar pagamento:
+Calcular troco (se aplicável)
+Gerar comprovante
+Atualizar status do agendamento para "finalizado"
+Atualizar status de pagamento para "pago"
+Registrar transação financeira
+Relatórios
+Relatório financeiro:
+
+Filtrar por período
+Exibir receitas, despesas e lucro
+Análise por categoria/serviço
+Relatório de clientes:
+
+Clientes mais frequentes
+Valor médio gasto por cliente
+Serviços mais utilizados
+Requisitos não-funcionais
+Garantir responsividade para diferentes tamanhos de tela
+Implementar validação de formulários em todos os campos
+Feedback visual claro para operações (sucesso/erro)
+Confirmação para operações críticas (exclusão, cancelamento)
+Manter tempo de resposta abaixo de 2 segundos para operações comuns
+Garantir funcionamento offline mínimo
+Implementar mecanismos de backup automático
+Evite erros comuns:
+NÃO use Express.listen() - use funções serverless puras do Next.js/Vercel
+NÃO dependa de módulos incompatíveis com Edge Runtime (crypto, fs, etc)
+Implemente corretamente o CORS para ambiente de produção
+Utilize ESM para imports/exports (não CommonJS)
+Configure corretamente as variáveis de ambiente na Vercel
+Implemente validação de entrada em todos os endpoints
+Este sistema deve ser entregue como um repositório GitHub pronto para deploy na Vercel, incluindo documentação detalhada de instalação e uso.
