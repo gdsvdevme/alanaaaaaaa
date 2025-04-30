@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { apiRequest } from './queryClient';
 
 // Obtenha as variáveis de ambiente do Supabase
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
@@ -9,7 +10,8 @@ if (!supabaseUrl || !supabaseKey) {
   console.error('Variáveis de ambiente do Supabase não configuradas. Configure VITE_SUPABASE_URL e VITE_SUPABASE_KEY.');
 }
 
-// Crie o cliente do Supabase
+// Crie o cliente do Supabase apenas para operações de banco de dados
+// Autenticação será feita através das APIs serverless
 export const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Tipo de usuário com informações adicionais
@@ -20,58 +22,43 @@ export type UserWithProfile = {
   perfil: 'admin' | 'atendente';
 };
 
-// Funções de autenticação
+// Funções de autenticação usando APIs serverless compatíveis com Vercel
 export async function signIn(email: string, password: string) {
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-  
-  if (error) throw error;
-  
-  // Busque informações adicionais do usuário a partir da tabela 'usuarios'
-  const { data: userData, error: userError } = await supabase
-    .from('usuarios')
-    .select('nome, perfil')
-    .eq('email', email)
-    .single();
-  
-  if (userError) throw userError;
-  
-  return {
-    user: {
-      id: data.user.id,
-      email: data.user.email!,
-      nome: userData.nome,
-      perfil: userData.perfil as 'admin' | 'atendente',
-    },
-    session: data.session,
-  };
+  try {
+    const response = await apiRequest('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    return response;
+  } catch (error: any) {
+    console.error('Erro ao autenticar:', error);
+    throw error;
+  }
 }
 
 export async function signOut() {
-  const { error } = await supabase.auth.signOut();
-  if (error) throw error;
+  try {
+    await apiRequest('/api/auth/logout', {
+      method: 'POST',
+    });
+  } catch (error: any) {
+    console.error('Erro ao fazer logout:', error);
+    throw error;
+  }
 }
 
 export async function getCurrentUser(): Promise<UserWithProfile | null> {
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) return null;
-  
-  // Busque informações adicionais do usuário
-  const { data, error } = await supabase
-    .from('usuarios')
-    .select('nome, perfil')
-    .eq('email', user.email!)
-    .single();
-  
-  if (error || !data) return null;
-  
-  return {
-    id: user.id,
-    email: user.email!,
-    nome: data.nome,
-    perfil: data.perfil as 'admin' | 'atendente',
-  };
+  try {
+    const user = await apiRequest('/api/auth/user', {
+      method: 'GET',
+    });
+    return user;
+  } catch (error: any) {
+    console.error('Erro ao buscar usuário:', error);
+    return null;
+  }
 }
