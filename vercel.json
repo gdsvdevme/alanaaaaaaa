@@ -27,7 +27,6 @@
     }
   ],
   "env": {
-    "VITE_SUPABASE_URL": "@vite_supabase_url",
-    "VITE_SUPABASE_KEY": "@vite_supabase_key"
+   
   }
 }
